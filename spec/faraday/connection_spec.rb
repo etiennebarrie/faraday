@@ -260,6 +260,13 @@ RSpec.describe Faraday::Connection do
       expect(uri1).not_to equal(uri2)
     end
 
+    it 'uses User Information from the URI for Basic authentication' do
+      conn.url_prefix = 'http://user:password@sushi.com'
+      expect(conn.url_prefix.to_s).to eq('http://sushi.com/')
+      request = conn.build_request(:get)
+      expect(request.headers['Authorization']).to eq("Basic #{Base64.strict_encode64('user:password')}")
+    end
+
     context 'with url_prefixed connection' do
       let(:url) { 'http://sushi.com/sushi/' }
 
